@@ -22,7 +22,7 @@ An AI-driven parametric insurance platform that:
 
 Delivers instant UPI payouts
 
-Target Users: Zomato/Swiggy delivery partners in high-risk cities (Mumbai, Delhi, Chennai)
+Target Users: Swiggy delivery partners in high-risk cities (Mumbai, Delhi, Chennai)
 
 Persona-Based Scenario: Vikram's Workflow
 
@@ -196,3 +196,5 @@ Future Work
 2) Real Swiggy order APIs
 3) Video verification (helmet cam analysis)
 4) Blockchain payout audit trails
+
+Video Link: https://youtu.be/WLsXvch95mY
