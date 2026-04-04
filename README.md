@@ -198,4 +198,4 @@ Future Work
 4) Blockchain payout audit trails
 
 Video Link (Seed Phase) : https://youtu.be/WLsXvch95mY
-Video Link (Scale Phase): 
+Video Link (Scale Phase): https://youtu.be/3_K_QBM88Ro
