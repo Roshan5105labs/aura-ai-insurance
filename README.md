@@ -1,4 +1,4 @@
-Aura: AI-Powered Parametric Insurance for India's Gig Economy
+**Aura: AI-Powered Parametric Insurance for India's Gig Economy**
 Guidewire DevTrails 2026 Hackathon Entry
 
 Built as a Guidewire-inspired extension for PolicyCenter/ClaimCenter, automating parametric triggers for gig economy risks.
