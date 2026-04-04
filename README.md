@@ -197,4 +197,5 @@ Future Work
 3) Video verification (helmet cam analysis)
 4) Blockchain payout audit trails
 
-Video Link: https://youtu.be/WLsXvch95mY
+Video Link (Seed Phase) : https://youtu.be/WLsXvch95mY
+Video Link (Scale Phase): 
