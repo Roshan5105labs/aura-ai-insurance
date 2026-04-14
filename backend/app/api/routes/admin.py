@@ -36,6 +36,7 @@ async def get_admin_stats(db: AsyncSession = Depends(get_db)):
     paid_week     = [c for c in claims_week if c.status == "Paid"]
     total_payout  = sum(c.payout_amount for c in paid_week)
     fraud_blocked = sum(1 for c in claims_week if c.fraud_tier == 3)
+    processing_count = sum(1 for c in claims_week if c.status == "Processing")
 
     # Loss ratio = payouts / premiums collected this week
     premiums_collected = (await db.execute(
@@ -60,6 +61,7 @@ async def get_admin_stats(db: AsyncSession = Depends(get_db)):
         "claims_this_week"       : len(claims_week),
         "total_payout_this_week" : round(float(total_payout), 2),
         "fraud_blocked"          : fraud_blocked,
+        "claims_processing"      : processing_count,
         "loss_ratio"             : loss_ratio,
         "liquidity_pool"         : round(liquidity_pool, 2),
         "payout_velocity"        : "~2 min avg",
@@ -140,9 +142,8 @@ async def manual_trigger_cycle(db: AsyncSession = Depends(get_db)):
     In production this runs on a schedule via APScheduler.
     Returns a summary of triggers fired.
     """
-    from app.services.trigger_engine import evaluate_triggers, stackable_payout
+    from app.services.trigger_engine import build_event_key, evaluate_triggers, stackable_payout
     from app.services.payout_service import initiate_payout
-    from app.core.config import COVERAGE_FACTOR
     import uuid
 
     active_policies = (await db.execute(
@@ -154,6 +155,9 @@ async def manual_trigger_cycle(db: AsyncSession = Depends(get_db)):
     summary = {"evaluated": 0, "triggered": 0, "total_payout": 0.0, "details": []}
 
     for policy, user in active_policies:
+        if datetime.utcnow() > policy.expiry_date:
+            policy.status = "Expired"
+            continue
         summary["evaluated"] += 1
         triggers = await evaluate_triggers(user.city, user.zone)
         active   = [t for t in triggers if t["is_active"]]
@@ -162,12 +166,14 @@ async def manual_trigger_cycle(db: AsyncSession = Depends(get_db)):
 
         payout = stackable_payout(triggers)
         payout = min(payout, user.avg_daily_earnings)
+        event_key = build_event_key(user.city, user.zone, triggers)
 
         # Check no duplicate claim in last hour
-        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
+        one_hour_ago = datetime.utcnow() - timedelta(hours=4)
         existing = (await db.execute(
             select(Claim).where(
                 Claim.user_id == user.id,
+                Claim.event_key == event_key,
                 Claim.created_at >= one_hour_ago
             )
         )).scalar_one_or_none()
@@ -182,6 +188,7 @@ async def manual_trigger_cycle(db: AsyncSession = Depends(get_db)):
             trigger_value = active[0]["value"],
             trigger_hours = 6.0,
             payout_amount = payout,
+            event_key     = event_key,
             fraud_tier    = 1,
             status        = "Approved",
         )
@@ -189,8 +196,10 @@ async def manual_trigger_cycle(db: AsyncSession = Depends(get_db)):
         await db.flush()
 
         payout_result = await initiate_payout(claim.id, payout)
-        claim.status     = "Paid"
+        claim.status     = "Paid" if payout_result.get("status") == "Processed" else payout_result.get("status", "Processing")
         claim.payout_ref = payout_result["payout_ref"]
+        claim.payout_provider = payout_result.get("provider")
+        claim.payout_method = payout_result.get("method")
         claim.paid_at    = datetime.utcnow()
 
         summary["triggered"]    += 1

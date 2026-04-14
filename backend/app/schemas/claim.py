@@ -8,6 +8,12 @@ class ClaimResponse(BaseModel):
     payout_amount: float
     status       : str
     fraud_tier   : int
+    fraud_score  : float = 0.0
+    review_reason: Optional[str] = None
+    payout_ref   : Optional[str] = None
+    payout_provider: Optional[str] = None
+    payout_method: Optional[str] = None
+    notification_channel: Optional[str] = None
 
 class ClaimTriggerRequest(BaseModel):
     # user_id is taken from URL path — not duplicated here

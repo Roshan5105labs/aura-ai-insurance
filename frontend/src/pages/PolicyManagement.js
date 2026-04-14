@@ -71,7 +71,7 @@ export default function PolicyManagement() {
                 }}>🛡️</div>
                 <div>
                   <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700 }}>
-                    {worker?.platform} Income Shield
+                    Aura Weekly Income Cover
                   </div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 2 }}>
                     {worker?.zone}, {worker?.city} · Loss of income only
@@ -115,6 +115,7 @@ export default function PolicyManagement() {
               { label: 'Max Coverage',      value: `₹${(policy?.coverage_amount ?? worker?.coverage_amount ?? 0).toLocaleString()}` },
               { label: 'Coverage Factor',   value: '0.8 × trigger hours' },
               { label: 'Payout Channel',    value: 'UPI (Instant)' },
+              { label: 'Notification',      value: 'WhatsApp first' },
               { label: 'Coverage Type',     value: 'Loss of Income Only ✅' },
               { label: 'Excluded',          value: 'Health / Vehicle / Accident ❌' },
             ].map(row => (
@@ -153,7 +154,7 @@ export default function PolicyManagement() {
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>High (1.0)</span>
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 12 }}>
-                Score computed from: rainfall 7d avg, AQI, flood zone, order trends, heat index, zone history.
+                Score computed from hyperlocal rainfall, AQI, zone risk, work pattern, claim history, and rider tenure.
                 Refreshed on each renewal.
               </div>
             </div>

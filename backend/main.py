@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import init_db
-from app.api.routes import onboarding, claims, policy, admin
+from app.api.routes import admin, claims, notifications, onboarding, policy
 
 
 @asynccontextmanager
@@ -61,6 +61,7 @@ app.add_middleware(
 app.include_router(onboarding.router, prefix="/api/v1", tags=["Onboarding"])
 app.include_router(policy.router,     prefix="/api/v1", tags=["Policy"])
 app.include_router(claims.router,     prefix="/api/v1", tags=["Claims"])
+app.include_router(notifications.router, prefix="/api/v1", tags=["Notifications"])
 app.include_router(admin.router,      prefix="/api/v1", tags=["Admin"])
 
 

@@ -1,1 +1,1 @@
-from . import onboarding, policy, claims, admin
+from . import admin, claims, notifications, onboarding, policy

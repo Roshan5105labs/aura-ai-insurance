@@ -40,9 +40,14 @@ const MOCK_POLICY = {
 };
 
 const MOCK_CLAIMS = [
-  { claim_id: "c1", trigger_event: "Heavy Rain",        timestamp: "2026-03-31T14:30:00Z", payout_amount: 500,  status: "Paid",        fraud_tier: 1 },
-  { claim_id: "c2", trigger_event: "Extreme Heat",      timestamp: "2026-03-25T11:00:00Z", payout_amount: 300,  status: "Paid",        fraud_tier: 1 },
-  { claim_id: "c3", trigger_event: "Social Disruption", timestamp: "2026-03-18T09:15:00Z", payout_amount: 600,  status: "UnderReview", fraud_tier: 2 },
+  { claim_id: "c1", trigger_event: "Heavy Rain",        timestamp: "2026-03-31T14:30:00Z", payout_amount: 500,  status: "Paid",        fraud_tier: 1, fraud_score: 0.143, review_reason: null, payout_ref: "pout_demo001", payout_provider: "Razorpay Test Mode", payout_method: "UPI", notification_channel: "WhatsApp" },
+  { claim_id: "c2", trigger_event: "High-Risk Zone",    timestamp: "2026-03-25T11:00:00Z", payout_amount: 300,  status: "Processing",  fraud_tier: 1, fraud_score: 0.101, review_reason: null, payout_ref: "pout_demo002", payout_provider: "Razorpay Test Mode", payout_method: "UPI", notification_channel: "WhatsApp" },
+  { claim_id: "c3", trigger_event: "Social Disruption", timestamp: "2026-03-18T09:15:00Z", payout_amount: 600,  status: "UnderReview", fraud_tier: 2, fraud_score: -0.012, review_reason: "High same-zone claim density suggests coordinated activity", payout_ref: null, payout_provider: null, payout_method: null, notification_channel: "WhatsApp" },
+];
+
+const MOCK_NOTIFICATIONS = [
+  { channel: "WhatsApp", provider: "Aura", from: "Aura", timestamp: "2026-04-12T10:30:00Z", title: "Aura worker alert", body: "Aura update: Heavy Rain in Dadar, Mumbai. Claim approved and payout of Rs.500 is being sent.", delivery_status: "Queued" },
+  { channel: "WhatsApp", provider: "Aura", from: "Aura", timestamp: "2026-04-11T17:15:00Z", title: "Aura renewal reminder", body: "Aura reminder: your weekly policy renews at Rs.350.", delivery_status: "Queued" },
 ];
 
 // ── API calls ─────────────────────────────────────────────────
@@ -118,6 +123,17 @@ export async function apiGetClaims(userId) {
   }
 }
 
+export async function apiGetNotifications(userId) {
+  if (!userId) return MOCK_NOTIFICATIONS;
+  try {
+    return await apiFetch(`/api/v1/notifications/${userId}`);
+  } catch (err) {
+    console.warn("[Aura] Mock notifications:", err.message);
+    await new Promise(r => setTimeout(r, 400));
+    return MOCK_NOTIFICATIONS;
+  }
+}
+
 export async function apiTriggerClaim(userId, workerData) {
   try {
     return await apiFetch(`/api/v1/claims/trigger/${userId}`, {
@@ -145,6 +161,12 @@ export async function apiTriggerClaim(userId, workerData) {
       payout_amount : 500,
       status        : "Paid",
       fraud_tier    : 1,
+      fraud_score   : 0.11,
+      review_reason : null,
+      payout_ref    : `pout-${Date.now()}`,
+      payout_provider: "Razorpay Test Mode",
+      payout_method : "UPI",
+      notification_channel: "WhatsApp",
     };
   }
 }

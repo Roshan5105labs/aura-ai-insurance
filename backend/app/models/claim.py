@@ -19,6 +19,10 @@ class Claim(Base):
     fraud_tier: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[str] = mapped_column(String(20), default="Pending")
     payout_ref: Mapped[str] = mapped_column(String(100), nullable=True)
+    payout_provider: Mapped[str] = mapped_column(String(50), nullable=True)
+    payout_method: Mapped[str] = mapped_column(String(20), nullable=True)
+    review_reason: Mapped[str] = mapped_column(String(255), nullable=True)
+    event_key: Mapped[str] = mapped_column(String(120), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     paid_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
