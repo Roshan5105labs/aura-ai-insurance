@@ -199,3 +199,5 @@ Future Work
 
 - Video Link (Seed Phase) : https://youtu.be/WLsXvch95mY 
 - Video Link (Scale Phase): https://youtu.be/3_K_QBM88Ro
+- Video Link (Soar Phase) :
+- PowerPoint Presentation : https://docs.google.com/presentation/d/1aVESAuyPeNqicBqcNrkGvkCgjBPoevSZ/edit?usp=sharing&ouid=114688269851244601174&rtpof=true&sd=true
